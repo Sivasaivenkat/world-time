@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
 	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="349aa51d-8649-4a28-9ef5-46929108a4d4" >
 		<http:listener-connection host="localhost" port="8081" />
 	</http:listener-config>
 	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="6bd12272-5926-4819-ab09-1184f60eb934" basePath="/timezone" >
 		<http:request-connection host="worldtimeapi.org" />
 	</http:request-config>
+	<api-gateway:autodiscovery apiId="19590788" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="ae06bc30-97aa-4af5-b973-01ca67761b06" flowRef="world-timeFlow" />
 	<flow name="world-timeFlow" doc:id="5b1bee93-27c0-4626-b448-8de5eccb9217" >
 		<http:listener doc:name="Listener" doc:id="592a0dcd-218c-4f1d-8377-d72e9d0a1f42" config-ref="HTTP_Listener_config" path="/timeapi"/>
 		<http:request method="GET" doc:name="Request" doc:id="de019a73-bb1c-4a65-81fe-0a193c079d04" config-ref="HTTP_Request_configuration" path="/America/New_York"/>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="c3387c25-ec8e-48a3-bcdd-3a2b04b40fd6" />
 		<ee:transform doc:name="Transform Message" doc:id="8719a405-af7c-4bc4-ac83-5227fa568547" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
